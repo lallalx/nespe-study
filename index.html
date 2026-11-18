@@ -17,6 +17,10 @@
     .mini-question{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;border-top:1px solid var(--line);padding:14px 0}.mini-question:first-child{border-top:0;padding-top:0}.mini-question:last-child{padding-bottom:0}.mini-question .q{font-weight:700;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-question .detail{font-size:12px;color:var(--muted);margin-top:3px}.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:#edf2fa;color:#66748b}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.good{background:var(--mint-soft);color:var(--mint)}.pill.gold{background:var(--gold-soft);color:var(--gold)}.placeholder{color:var(--muted);text-align:center;padding:32px 14px;font-size:13px}.placeholder b{display:block;color:var(--ink);font-size:15px;margin:6px 0}
     .toolbar{padding:17px;display:grid;grid-template-columns:minmax(220px,1fr) minmax(125px,.45fr) minmax(155px,.5fr);gap:10px;margin-bottom:14px}.question-list{display:grid;gap:10px}.list-item{padding:18px 20px}.list-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.list-num{font-size:11px;font-weight:800;color:#7c8ba0}.list-q{margin:0;font-size:15px;font-weight:750;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}.list-answer{font-size:12px;color:var(--muted);margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.list-footer{display:flex;align-items:center;gap:7px;justify-content:space-between;border-top:1px solid var(--line);padding-top:13px;margin-top:14px;flex-wrap:wrap}.list-stats{font-size:12px;color:var(--muted);display:flex;gap:13px}.empty-action{text-align:center;padding:42px 18px}.empty-action h3{margin:0 0 5px;font-size:18px}.empty-action p{font-size:13px;color:var(--muted);margin:0 0 18px}.count-label{font-size:12px;color:var(--muted);margin:0 0 10px}
     .editor{max-width:750px;margin:0 auto}.editor .surface{padding:28px}.field{margin-bottom:20px}.field textarea{min-height:126px}.editor .subfield textarea{min-height:95px}.editor .actionbar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;margin-top:6px}.tipbox{border-radius:12px;background:#f2f5fc;color:#5d6d86;padding:13px 15px;font-size:12px;margin:0 0 22px;line-height:1.7}.required{color:var(--bad)}
+    .reference-link{display:inline-flex;align-items:center;gap:7px;max-width:100%;text-decoration:none;color:var(--primary);font-weight:800;font-size:13px;background:var(--primary-soft);border:1px solid #dce5ff;border-radius:10px;padding:8px 12px;overflow-wrap:anywhere;line-height:1.4}
+    .reference-link:hover{background:#e2eaff;text-decoration:underline}
+    .study-reference{margin:2px 0 19px}
+    .list-reference{margin-top:10px}
     .study-favorite{border:1px solid #e2d3a0;border-radius:10px;background:#fffdf5;color:#846118;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;min-height:40px;white-space:nowrap;transition:background .15s,border-color .15s}
     .study-favorite:hover{background:#fff5d5;border-color:#d4b85d}
     .study-favorite[aria-pressed="true"]{background:#fff0b8;color:#795000;border-color:#d4b04c}
@@ -130,7 +134,8 @@
       try{
         const remote=await readCloud();
         if(remote&&Array.isArray(remote.questions)){
-          if(questions.length&&JSON.stringify(questions)!==JSON.stringify(remote.questions)){
+          const remoteQuestions=remote.questions.map(normalize).filter(Boolean);
+          if(questions.length&&JSON.stringify(questions)!==JSON.stringify(remoteQuestions)){
             if(confirm(`この端末に ${questions.length} 問、クラウドに ${remote.questions.length} 問あります。\n\n「OK」＝クラウドをこの端末に読み込む（推奨）\n「キャンセル」＝この端末のデータをクラウドに上書きする\n\n不安な場合はキャンセル前にJSONバックアップを保存してください。`)){
               questions=remote.questions.map(normalize).filter(Boolean);localSaveOnly();
             }else{await writeCloud({version:1,questions});}
@@ -153,6 +158,16 @@
     }
 
 
+    // URLs are untrusted text: allow only absolute http(s) links before creating href attributes.
+    function validReferenceUrl(raw){
+      const value=String(raw??'').trim();
+      if(!value)return '';
+      try{const u=new URL(value);return (u.protocol==='http:'||u.protocol==='https:')&&u.hostname&&!u.username&&!u.password?value:'';}catch{return '';}
+    }
+    function referenceLink(url){
+      const safe=validReferenceUrl(url);
+      return safe?`<a class="reference-link" href="${esc(safe)}" target="_blank" rel="noopener noreferrer" aria-label="参考ページを新しいタブで開く">↗ 参考ページを開く</a>`:'';
+    }
     function normalize(raw) {
       if (!raw || typeof raw !== 'object' || !String(raw.question ?? '').trim() || !String(raw.answer ?? '').trim()) return null;
       return {
@@ -161,6 +176,7 @@
         answer: String(raw.answer).trim(),
         explanation: String(raw.explanation || ''),
         category: String(raw.category || '').trim(),
+        referenceUrl: validReferenceUrl(raw.referenceUrl ?? raw.reference_url ?? raw['参考リンク'] ?? ''),
         correctCount: Math.max(0,Math.min(1000000,Number(raw.correctCount) || 0)),
         wrongCount: Math.max(0,Math.min(1000000,Number(raw.wrongCount) || 0)),
         favorite: !!raw.favorite,
@@ -235,7 +251,7 @@
     function visibleList() {
       let arr=filterQuestions(listFilter);
       const s=listSearch.trim().toLocaleLowerCase();
-      if(s) arr=arr.filter(q=>[q.question,q.answer,q.explanation,q.category].some(v=>v.toLocaleLowerCase().includes(s)));
+      if(s) arr=arr.filter(q=>[q.question,q.answer,q.explanation,q.category,q.referenceUrl].some(v=>String(v||'').toLocaleLowerCase().includes(s)));
       if(listSort==='wrong') arr.sort((a,b)=>b.wrongCount-a.wrongCount||b.updatedAt-a.updatedAt);
       if(listSort==='old') arr.sort((a,b)=>a.createdAt-b.createdAt);
       if(listSort==='new') arr.sort((a,b)=>b.createdAt-a.createdAt);
@@ -262,6 +278,7 @@
           <div class="list-top"><span class="list-num">${String(idx+1).padStart(3,'0')}</span>${q.category?`<span class="pill">${esc(q.category)}</span>`:''}${q.lastResult==='wrong'?'<span class="pill bad">前回 ×</span>':q.lastResult==='correct'?'<span class="pill good">前回 ○</span>':'<span class="pill">未挑戦</span>'}${q.favorite?'<span class="pill gold">★ お気に入り</span>':''}</div>
           <h3 class="list-q">${esc(q.question)}</h3>
           <div class="list-answer">答え：${esc(q.answer.replace(/\n/g,' ／ '))}</div>
+          ${q.referenceUrl?`<div class="list-reference">${referenceLink(q.referenceUrl)}</div>`:''}
           <div class="list-footer">
             <div class="list-stats"><span>○ ${q.correctCount} 回</span><span style="color:var(--bad)">× ${q.wrongCount} 回</span></div>
             <div class="row wrap"><button class="btn btn-secondary btn-sm" data-action="favorite" data-id="${esc(q.id)}" aria-label="お気に入り切替">${q.favorite?'★ 解除':'☆ 保存'}</button><button class="btn btn-soft btn-sm" data-action="edit" data-id="${esc(q.id)}">編集</button><button class="btn btn-danger btn-sm" data-action="delete" data-id="${esc(q.id)}">削除</button></div>
@@ -282,6 +299,7 @@
               <div class="field"><label class="form-label">復習管理</label><p class="hint" style="margin-top:11px">${q?`正解 ${q.correctCount}回 ／ 不正解 ${q.wrongCount}回`:'学習すると正誤回数を自動でカウントします。'}</p></div>
             </div>
             <div class="field subfield"><label class="form-label" for="explanation-text">解説・補足メモ <span style="font-weight:500">（任意）</span></label><textarea class="control" id="explanation-text" placeholder="覚えるコツ、試験での注意点など">${esc(q?.explanation||'')}</textarea></div>
+            <div class="field"><label class="form-label" for="reference-url">参考リンク <span style="font-weight:500">（任意）</span></label><input class="control" id="reference-url" type="url" inputmode="url" autocomplete="url" placeholder="https://www.rfc-editor.org/rfc/rfc1035" value="${esc(q?.referenceUrl||'')}"><p class="hint">参考になるWebページのURLを入力してください。学習中・問題一覧から開けます（1問につき1リンク）。</p></div>
             <div class="actionbar"><button class="btn btn-secondary" type="button" data-action="cancel-edit">キャンセル</button><button class="btn btn-primary" type="submit">${q?'変更を保存':'登録して次の問題へ'} →</button></div>
           </form>
         </div>
@@ -308,6 +326,7 @@
         <div class="surface study-card">
           <div class="row between wrap"><span class="label">QUESTION</span><div class="row wrap">${q.category?`<span class="pill">${esc(q.category)}</span>`:''}<span class="pill ${q.wrongCount?'bad':''}">過去のミス ${q.wrongCount} 回</span><button type="button" class="study-favorite" data-action="study-favorite" aria-pressed="${q.favorite?'true':'false'}" aria-label="${q.favorite?'お気に入りを解除':'お気に入りに登録'}">${q.favorite?'★ お気に入り済み':'☆ お気に入り'}</button></div></div>
           <div class="study-question">${esc(q.question)}</div>
+          ${q.referenceUrl?`<div class="study-reference">${referenceLink(q.referenceUrl)}</div>`:''}
           ${session.revealed?`<div class="study-answer"><div class="label">ANSWER</div><div class="answer-text">${esc(q.answer)}</div>${q.explanation?`<div class="explanation"><strong>補足・解説</strong>\n${esc(q.explanation)}</div>`:''}</div>`:`<p class="hint">答えを考えたら「答えを見る」をタップしてください。</p>`}
         </div>
         ${!session.revealed?`<div class="session-actions"><button class="btn btn-primary" data-action="reveal">答えを見る　→</button></div>`:!session.judged?`<div class="judgement"><button class="btn btn-danger" data-action="judge-wrong">×　不正解だった</button><button class="btn btn-good" data-action="judge-correct">○　正解した</button></div><div class="note-line">自己採点をすると、回数が自動的に保存されます。</div>`:`<div class="session-actions"><div class="note-line">${session.answer==='correct'?'○ 正解として記録しました':'× 不正解として記録しました'}</div><button class="btn btn-primary" data-action="next">${num===session.ids.length?'結果を見る':'次の問題へ　→'}</button></div>`}
@@ -336,8 +355,8 @@
             <div class="row wrap"><button class="btn btn-primary" data-action="cloud-login">ログイン</button><button class="btn btn-secondary" data-action="cloud-signup">新規登録</button><button class="btn btn-secondary" data-action="cloud-pull" ${cloudReady?'':'disabled'}>クラウドから再読込</button>${cloudSession?'<button class="btn btn-secondary" data-action="cloud-logout">ログアウト</button>':''}</div>
             <p class="hint" style="margin-top:13px">初回のみ接続設定が必要です。SupabaseのSQL Editorで添付のSQLを実行し、AuthenticationでEmailログインを有効にしてください。service_role / secret keyは絶対に入力しないでください。</p>
           </section>
-          <section class="surface"><h2>データをバックアップ</h2><p>登録した問題・正誤回数・お気に入り・解説をすべてJSONファイルに保存できます。iPhoneやiPadへの移行にも使えます。</p><div class="row wrap"><button class="btn btn-primary" data-action="export-json">JSONバックアップを保存</button><button class="btn btn-secondary" data-action="export-csv">CSVを保存</button></div><div class="soft-note">おすすめ：問題をたくさん入力した日には「JSONバックアップを保存」を押してください。CSVは表計算ソフトでも編集できますが、復元用にはJSONがおすすめです。</div></section>
-          <section class="surface"><h2>保存したデータを取り込む</h2><p>以前に保存したJSONファイルを読み込めます。別の端末へのデータ移行にも対応しています。</p><div class="row wrap"><button class="btn btn-secondary" data-action="import-json">JSONファイルを取り込む</button><button class="btn btn-secondary" data-action="import-csv">CSVで問題を追加</button><button class="btn btn-secondary" data-action="csv-template">CSV入力テンプレート</button></div><div class="soft-note">JSON読み込み時は、現在の内容を丸ごと置き換えるか確認します。CSV取り込みでは、問題と答えを登録し、重複する組み合わせを除外します。CSVの見出しは「問題,答え,分類,解説」です。問題・答えは必須、分類・解説は空欄でも登録できます。UTF-8形式のCSVを使用してください。登録前に追加件数を確認できます。</div></section>
+          <section class="surface"><h2>データをバックアップ</h2><p>登録した問題・正誤回数・お気に入り・解説・参考リンクをすべてJSONファイルに保存できます。iPhoneやiPadへの移行にも使えます。</p><div class="row wrap"><button class="btn btn-primary" data-action="export-json">JSONバックアップを保存</button><button class="btn btn-secondary" data-action="export-csv">CSVを保存</button></div><div class="soft-note">おすすめ：問題をたくさん入力した日には「JSONバックアップを保存」を押してください。CSVは表計算ソフトでも編集できますが、復元用にはJSONがおすすめです。</div></section>
+          <section class="surface"><h2>保存したデータを取り込む</h2><p>以前に保存したJSONファイルを読み込めます。別の端末へのデータ移行にも対応しています。</p><div class="row wrap"><button class="btn btn-secondary" data-action="import-json">JSONファイルを取り込む</button><button class="btn btn-secondary" data-action="import-csv">CSVで問題を追加</button><button class="btn btn-secondary" data-action="csv-template">CSV入力テンプレート</button></div><div class="soft-note">JSON読み込み時は、現在の内容を丸ごと置き換えるか確認します。CSV取り込みでは、新しい問題を追加します。同じ「問題＋答え」が既にある場合は、参考リンクが入力されていればそのURLだけを追加・更新できます。正誤回数やお気に入りは変更しません。見出しは「問題,答え,分類,解説,参考リンク」。問題・答えは必須、ほかは任意です。参考リンクは https:// などで始まるURLを指定してください。従来の4列CSVも使用できます。登録前に件数を確認できます。</div></section>
           <section class="surface"><h2>正誤回数をリセット</h2><p>全問題の「正解回数」「間違い回数」「前回結果」をゼロに戻します。問題文や答えはそのまま残ります。</p><button class="btn btn-danger" data-action="reset-counts">全問の正誤記録をリセット</button></section>
           <section class="surface"><h2>データの保存について</h2><p>ログイン前は端末内に保存されます。ログイン後は端末内とクラウドの両方に保存します。通信が不安定なときは、同期状態を確認してください。</p><div class="soft-note"><strong>iPhone・iPadでも使うには</strong><div style="margin-top:5px">このHTMLファイルを各端末で開くか、Web上に公開するとSafariでアクセスできます。<strong>Supabaseでログインすれば自動同期できます。</strong> 念のためJSONバックアップも定期的に保存してください。</div></div><p class="warning" style="margin:12px 0 0">※ シークレット／プライベートブラウズでは保存が続かない場合があります。</p></section>
         </div>`;
@@ -348,7 +367,7 @@
     const day=()=>new Date().toLocaleDateString('sv-SE');
     function exportJSON(){download(JSON.stringify({app:'nespe-ichimon-ichito',version:1,exportedAt:new Date().toISOString(),questions},null,2),`ネスペ1問1答_バックアップ_${day()}.json`,'application/json;charset=utf-8');notify('JSONバックアップを書き出しました');}
     const quoteCSV = v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-    function exportCSV(){const lines=[['問題','答え','分類','解説','正解回数','間違い回数','お気に入り'],...questions.map(q=>[q.question,q.answer,q.category,q.explanation,q.correctCount,q.wrongCount,q.favorite?'1':'0'])];download('\ufeff'+lines.map(cols=>cols.map(quoteCSV).join(',')).join('\r\n'),`ネスペ1問1答_問題一覧_${day()}.csv`,'text/csv;charset=utf-8');notify('CSVを書き出しました');}
+    function exportCSV(){const lines=[['問題','答え','分類','解説','参考リンク','正解回数','間違い回数','お気に入り'],...questions.map(q=>[q.question,q.answer,q.category,q.explanation,q.referenceUrl,q.correctCount,q.wrongCount,q.favorite?'1':'0'])];download('\ufeff'+lines.map(cols=>cols.map(quoteCSV).join(',')).join('\r\n'),`ネスペ1問1答_問題一覧_${day()}.csv`,'text/csv;charset=utf-8');notify('CSVを書き出しました');}
     function parseCSV(text){
       const rows=[];let row=[],val='',inside=false;
       text=text.replace(/^\uFEFF/,'');
@@ -364,10 +383,10 @@
       return rows;
     }
     function downloadCSVTemplate(){
-      const headers=['問題','答え','分類','解説'];
+      const headers=['問題','答え','分類','解説','参考リンク'];
       const examples=[
-        ['DNSのAレコードは何を登録する？','ホスト名に対応するIPv4アドレス','DNS','IPv6アドレスはAAAAレコードを使用する。'],
-        ['OSPFの正式名称は？','Open Shortest Path First','OSPF','リンクステート型のルーティングプロトコル。']
+        ['DNSのAレコードは何を登録する？','ホスト名に対応するIPv4アドレス','DNS','IPv6アドレスはAAAAレコードを使用する。','https://www.rfc-editor.org/rfc/rfc1035'],
+        ['OSPFの正式名称は？','Open Shortest Path First','OSPF','リンクステート型のルーティングプロトコル。','https://www.rfc-editor.org/rfc/rfc2328']
       ];
       download('\ufeff'+[headers,...examples].map(r=>r.map(quoteCSV).join(',')).join('\r\n'), 'ネスペ_問題一括登録テンプレート.csv','text/csv;charset=utf-8');
       notify('CSVテンプレートを保存しました');
@@ -377,31 +396,46 @@
       if(rows.length<2)throw Error('CSVのデータ行が見つかりません。');
       const headers=rows[0].map(x=>x.trim().toLowerCase());
       const col=(...names)=>headers.findIndex(x=>names.includes(x));
-      const qcol=col('問題','question','q'),acol=col('答え','answer','a'),ccol=col('分類','テーマ','category'),ecol=col('解説','explanation','メモ');
+      const qcol=col('問題','question','q'),acol=col('答え','answer','a'),ccol=col('分類','テーマ','category'),ecol=col('解説','explanation','メモ'),lcol=col('参考リンク','リンク','url','referenceurl','reference_url');
       if(qcol<0||acol<0)throw Error('CSVの1行目に「問題」「答え」の見出しが必要です。');
-      const existing=new Set(questions.map(q=>q.question+'\u0000'+q.answer));
-      const pending=[];let duplicates=0,invalid=0;
+      const originalBySig=new Map(questions.map(q=>[q.question+'\u0000'+q.answer,q]));
+      const seen=new Set(originalBySig.keys());
+      const pending=[];const linkChanges=new Map();
+      let duplicates=0,invalid=0,invalidUrls=0;
       for(const row of rows.slice(1)){
         const question=(row[qcol]||'').trim(),answer=(row[acol]||'').trim();
         if(!question||!answer){invalid++;continue;}
+        const rawUrl=lcol>=0?(row[lcol]||'').trim():'';
+        const referenceUrl=validReferenceUrl(rawUrl);
+        if(rawUrl&&!referenceUrl){invalidUrls++;continue;}
         const sig=question+'\u0000'+answer;
-        if(existing.has(sig)){duplicates++;continue;}
-        pending.push(normalize({question,answer,category:ccol>=0?row[ccol]:'',explanation:ecol>=0?row[ecol]:''}));
-        existing.add(sig);
+        if(seen.has(sig)){
+          const existing=originalBySig.get(sig);
+          if(existing && referenceUrl && existing.referenceUrl!==referenceUrl){linkChanges.set(existing.id,referenceUrl);}
+          else duplicates++;
+          continue;
+        }
+        pending.push(normalize({question,answer,category:ccol>=0?row[ccol]:'',explanation:ecol>=0?row[ecol]:'',referenceUrl}));
+        seen.add(sig);
       }
       if(questions.length+pending.length>10000)throw Error('合計10,000問まで登録できます。CSVを分割してください。');
-      const message=`CSVを確認しました。\n\n新しく追加：${pending.length}問\n重複しているため除外：${duplicates}行\n問題または答えが空欄：${invalid}行\n\n既存の${questions.length}問と学習履歴は残します。\n追加しますか？`;
-      if(!pending.length){alert(message.replace('追加しますか？','追加できる問題がありません。'));return;}
+      const message=`CSVを確認しました。\n\n新しく追加：${pending.length}問\n既存問題の参考リンクを追加・更新：${linkChanges.size}問\n重複（変更なし）：${duplicates}行\n問題または答えが空欄：${invalid}行\n参考リンクのURLが不正：${invalidUrls}行\n\n既存の学習履歴・正誤回数・お気に入りは残ります。\n反映しますか？`;
+      if(!pending.length&&!linkChanges.size){alert(message.replace('反映しますか？','反映する内容がありません。'));return;}
       if(!confirm(message))return;
       questions.push(...pending);
-      save();render();notify(`${pending.length}問を追加しました（重複${duplicates}件を除外）`);
+      for(const q of questions){
+        if(linkChanges.has(q.id)){q.referenceUrl=linkChanges.get(q.id);q.updatedAt=Date.now();}
+      }
+      save();render();notify(`${pending.length}問追加・${linkChanges.size}問の参考リンクを更新しました`);
     }
     function saveForm(){
-      const question=$('#question-text')?.value.trim(),answer=$('#answer-text')?.value.trim(),category=$('#category-text')?.value.trim(),explanation=$('#explanation-text')?.value.trim();
+      const question=$('#question-text')?.value.trim(),answer=$('#answer-text')?.value.trim(),category=$('#category-text')?.value.trim(),explanation=$('#explanation-text')?.value.trim(),urlInput=$('#reference-url')?.value.trim()||'';
       if(!question||!answer){notify('問題と答えは必須です');return;}
+      const referenceUrl=validReferenceUrl(urlInput);
+      if(urlInput&&!referenceUrl){notify('参考リンクは https:// または http:// で始まる正しいURLを入力してください');return;}
       const now=Date.now();let q=questions.find(q=>q.id===editorId);
-      if(q){Object.assign(q,{question,answer,category,explanation,updatedAt:now});save();editorId=null;activeTab='list';render();notify('変更を保存しました');}
-      else {questions.push(normalize({question,answer,category,explanation,createdAt:now,updatedAt:now}));save();renderEditor();$('#question-text')?.focus();notify(`${questions.length}問目を登録しました`);window.scrollTo({top:0,behavior:'instant'});}
+      if(q){Object.assign(q,{question,answer,category,explanation,referenceUrl,updatedAt:now});save();editorId=null;activeTab='list';render();notify('変更を保存しました');}
+      else {questions.push(normalize({question,answer,category,explanation,referenceUrl,createdAt:now,updatedAt:now}));save();renderEditor();$('#question-text')?.focus();notify(`${questions.length}問目を登録しました`);window.scrollTo({top:0,behavior:'instant'});}
     }
     function onClick(e){
       const btn=e.target.closest('[data-action], [data-tab]');if(!btn)return;
