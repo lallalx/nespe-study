@@ -337,7 +337,7 @@
             <p class="hint" style="margin-top:13px">初回のみ接続設定が必要です。SupabaseのSQL Editorで添付のSQLを実行し、AuthenticationでEmailログインを有効にしてください。service_role / secret keyは絶対に入力しないでください。</p>
           </section>
           <section class="surface"><h2>データをバックアップ</h2><p>登録した問題・正誤回数・お気に入り・解説をすべてJSONファイルに保存できます。iPhoneやiPadへの移行にも使えます。</p><div class="row wrap"><button class="btn btn-primary" data-action="export-json">JSONバックアップを保存</button><button class="btn btn-secondary" data-action="export-csv">CSVを保存</button></div><div class="soft-note">おすすめ：問題をたくさん入力した日には「JSONバックアップを保存」を押してください。CSVは表計算ソフトでも編集できますが、復元用にはJSONがおすすめです。</div></section>
-          <section class="surface"><h2>保存したデータを取り込む</h2><p>以前に保存したJSONファイルを読み込めます。別の端末へのデータ移行にも対応しています。</p><div class="row wrap"><button class="btn btn-secondary" data-action="import-json">JSONファイルを取り込む</button><button class="btn btn-secondary" data-action="import-csv">CSVで問題を追加</button></div><div class="soft-note">JSON読み込み時は、現在の内容を丸ごと置き換えるか確認します。CSV取り込みでは、問題と答えを登録し、重複する組み合わせを除外します。CSVの見出しは「問題,答え,分類,解説」に対応しています。</div></section>
+          <section class="surface"><h2>保存したデータを取り込む</h2><p>以前に保存したJSONファイルを読み込めます。別の端末へのデータ移行にも対応しています。</p><div class="row wrap"><button class="btn btn-secondary" data-action="import-json">JSONファイルを取り込む</button><button class="btn btn-secondary" data-action="import-csv">CSVで問題を追加</button><button class="btn btn-secondary" data-action="csv-template">CSV入力テンプレート</button></div><div class="soft-note">JSON読み込み時は、現在の内容を丸ごと置き換えるか確認します。CSV取り込みでは、問題と答えを登録し、重複する組み合わせを除外します。CSVの見出しは「問題,答え,分類,解説」です。問題・答えは必須、分類・解説は空欄でも登録できます。UTF-8形式のCSVを使用してください。登録前に追加件数を確認できます。</div></section>
           <section class="surface"><h2>正誤回数をリセット</h2><p>全問題の「正解回数」「間違い回数」「前回結果」をゼロに戻します。問題文や答えはそのまま残ります。</p><button class="btn btn-danger" data-action="reset-counts">全問の正誤記録をリセット</button></section>
           <section class="surface"><h2>データの保存について</h2><p>ログイン前は端末内に保存されます。ログイン後は端末内とクラウドの両方に保存します。通信が不安定なときは、同期状態を確認してください。</p><div class="soft-note"><strong>iPhone・iPadでも使うには</strong><div style="margin-top:5px">このHTMLファイルを各端末で開くか、Web上に公開するとSafariでアクセスできます。<strong>Supabaseでログインすれば自動同期できます。</strong> 念のためJSONバックアップも定期的に保存してください。</div></div><p class="warning" style="margin:12px 0 0">※ シークレット／プライベートブラウズでは保存が続かない場合があります。</p></section>
         </div>`;
@@ -363,20 +363,38 @@
       row.push(val);if(row.some(c=>c.trim()))rows.push(row);
       return rows;
     }
+    function downloadCSVTemplate(){
+      const headers=['問題','答え','分類','解説'];
+      const examples=[
+        ['DNSのAレコードは何を登録する？','ホスト名に対応するIPv4アドレス','DNS','IPv6アドレスはAAAAレコードを使用する。'],
+        ['OSPFの正式名称は？','Open Shortest Path First','OSPF','リンクステート型のルーティングプロトコル。']
+      ];
+      download('\ufeff'+[headers,...examples].map(r=>r.map(quoteCSV).join(',')).join('\r\n'), 'ネスペ_問題一括登録テンプレート.csv','text/csv;charset=utf-8');
+      notify('CSVテンプレートを保存しました');
+    }
     function importCSV(text){
-      const rows=parseCSV(text);if(rows.length<2)throw Error('CSVのデータ行が見つかりません。');
+      const rows=parseCSV(text);
+      if(rows.length<2)throw Error('CSVのデータ行が見つかりません。');
       const headers=rows[0].map(x=>x.trim().toLowerCase());
       const col=(...names)=>headers.findIndex(x=>names.includes(x));
       const qcol=col('問題','question','q'),acol=col('答え','answer','a'),ccol=col('分類','テーマ','category'),ecol=col('解説','explanation','メモ');
       if(qcol<0||acol<0)throw Error('CSVの1行目に「問題」「答え」の見出しが必要です。');
-      const existing=new Set(questions.map(q=>q.question+'\u0000'+q.answer));let added=0,skipped=0;
+      const existing=new Set(questions.map(q=>q.question+'\u0000'+q.answer));
+      const pending=[];let duplicates=0,invalid=0;
       for(const row of rows.slice(1)){
-        const question=(row[qcol]||'').trim(),answer=(row[acol]||'').trim();const sig=question+'\u0000'+answer;
-        if(!question||!answer||existing.has(sig)){skipped++;continue;}
-        const obj=normalize({question,answer,category:ccol>=0?row[ccol]:'',explanation:ecol>=0?row[ecol]:''});
-        questions.push(obj);existing.add(sig);added++;
+        const question=(row[qcol]||'').trim(),answer=(row[acol]||'').trim();
+        if(!question||!answer){invalid++;continue;}
+        const sig=question+'\u0000'+answer;
+        if(existing.has(sig)){duplicates++;continue;}
+        pending.push(normalize({question,answer,category:ccol>=0?row[ccol]:'',explanation:ecol>=0?row[ecol]:''}));
+        existing.add(sig);
       }
-      if(added)save();render();notify(`${added}問を追加、${skipped}行をスキップしました`);
+      if(questions.length+pending.length>10000)throw Error('合計10,000問まで登録できます。CSVを分割してください。');
+      const message=`CSVを確認しました。\n\n新しく追加：${pending.length}問\n重複しているため除外：${duplicates}行\n問題または答えが空欄：${invalid}行\n\n既存の${questions.length}問と学習履歴は残します。\n追加しますか？`;
+      if(!pending.length){alert(message.replace('追加しますか？','追加できる問題がありません。'));return;}
+      if(!confirm(message))return;
+      questions.push(...pending);
+      save();render();notify(`${pending.length}問を追加しました（重複${duplicates}件を除外）`);
     }
     function saveForm(){
       const question=$('#question-text')?.value.trim(),answer=$('#answer-text')?.value.trim(),category=$('#category-text')?.value.trim(),explanation=$('#explanation-text')?.value.trim();
@@ -428,6 +446,7 @@
       else if(act==='export-csv')exportCSV();
       else if(act==='import-json'){$('#import-file').value='';$('#import-file').click();}
       else if(act==='import-csv'){$('#import-csv-file').value='';$('#import-csv-file').click();}
+      else if(act==='csv-template')downloadCSVTemplate();
       else if(act==='reset-counts'){if(!questions.length){notify('問題がありません');return;}if(confirm(`全${questions.length}問の正誤記録をゼロに戻しますか？\n問題文・解答は残ります。`)){questions.forEach(q=>{q.correctCount=0;q.wrongCount=0;q.lastResult=null;q.lastAttemptAt=null;});save();render();notify('正誤記録をリセットしました');}}
     }
     document.addEventListener('click',onClick);
