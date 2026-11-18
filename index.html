@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f6f8fc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>ネスペ一問一答 | 学習ノート</title>
+  <style>
+    :root{--ink:#1b2b43;--muted:#6b7990;--line:#e1e8f2;--bg:#f6f8fc;--surface:#fff;--primary:#365ee8;--primary-dark:#2549c4;--primary-soft:#edf1ff;--mint:#0c947a;--mint-soft:#e4f8f0;--bad:#c34b57;--bad-soft:#fff0f1;--gold:#a57611;--gold-soft:#fff6df;--shadow:0 6px 24px rgba(29,52,96,.055)}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;color:var(--ink);font-size:15px;line-height:1.65} button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}a{color:var(--primary)}
+    :focus-visible{outline:3px solid #94a8fc;outline-offset:2px} .shell{max-width:980px;margin:0 auto;padding:0 22px 100px} .topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:32px 0 23px} .logo{display:flex;gap:12px;align-items:center;min-width:0}.logo-mark{width:46px;height:46px;border-radius:15px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800;font-size:19px;box-shadow:0 6px 16px #365ee82a;flex:none}.logo-copy strong{display:block;font-size:19px;line-height:1.3;letter-spacing:.01em}.logo-copy span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.header-tag{font-size:12px;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:7px}.header-tag:before{content:"";width:7px;height:7px;border-radius:99px;background:#20ad8f;display:block}.nav{display:flex;gap:5px;padding:6px;background:#eaf0f8;border-radius:16px;margin-bottom:30px}.nav-btn{flex:1;min-width:0;border:0;background:transparent;color:#65728a;padding:12px 6px;border-radius:12px;font-weight:700;transition:.15s}.nav-btn.active{color:var(--primary);background:white;box-shadow:0 2px 10px #32476716}.nav-btn:hover:not(.active){color:var(--ink)}
+    .heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px}.heading h1{font-size:27px;letter-spacing:-.035em;line-height:1.35;margin:0}.heading p{margin:6px 0 0;color:var(--muted);font-size:13px}.eyebrow{font-size:11px;letter-spacing:.15em;font-weight:800;color:var(--primary);margin-bottom:5px;text-transform:uppercase}.section-title{font-size:18px;letter-spacing:-.025em;margin:0 0 14px}.surface{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:19px}.pad{padding:24px}.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:24px}.stat{padding:21px 23px}.stat .meta{font-size:12px;color:var(--muted);font-weight:650}.stat .number{font-size:31px;line-height:1.25;font-weight:800;letter-spacing:-.045em;margin-top:8px}.stat .suffix{font-size:12px;color:var(--muted);font-weight:550;margin-left:5px}.stat .foot{font-size:12px;color:var(--muted);margin-top:3px}.stat.bad .number{color:var(--bad)}.stat.good .number{color:var(--mint)}
+    .study-launch{display:grid;grid-template-columns:1.25fr .85fr;gap:16px;margin-bottom:30px}.launch-intro{border-radius:19px;background:#223c83;color:#fff;padding:27px;position:relative;overflow:hidden;min-width:0}.launch-intro:after{content:"";position:absolute;right:-45px;top:-70px;width:220px;height:220px;border-radius:50%;border:40px solid #ffffff0d;pointer-events:none}.launch-intro h2{font-size:24px;line-height:1.35;margin:5px 0 8px;position:relative;z-index:1}.launch-intro p{font-size:13px;color:#d6e1ff;max-width:400px;margin:0;position:relative;z-index:1}.launch-options{padding:19px 20px}.form-label{display:block;font-size:12px;font-weight:800;color:#58677e;margin-bottom:8px}.launch-options .field{margin-bottom:13px} .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.control{background:white;border:1px solid #d7dfec;border-radius:11px;padding:11px 12px;outline:none;width:100%;color:var(--ink);min-height:44px}.control:focus{border-color:#7190ef;box-shadow:0 0 0 3px #365ee815}.control::placeholder{color:#97a2b3} textarea.control{min-height:100px;resize:vertical}.hint{color:var(--muted);font-size:12px;line-height:1.55;margin:5px 0 0}.btn{border:1px solid transparent;border-radius:11px;min-height:44px;padding:9px 17px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;transition:.15s;text-align:center}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover:not(:disabled){background:var(--primary-dark)}.btn-secondary{background:#fff;color:var(--ink);border-color:var(--line)}.btn-secondary:hover:not(:disabled){background:#f7f9fd}.btn-soft{background:var(--primary-soft);color:var(--primary)}.btn-danger{background:var(--bad-soft);color:var(--bad)}.btn-good{background:var(--mint-soft);color:var(--mint)}.btn-block{width:100%}.btn-sm{min-height:35px;padding:6px 11px;font-size:12px;border-radius:9px}.row{display:flex;gap:10px;align-items:center}.wrap{flex-wrap:wrap}.grow{flex:1;min-width:0}.between{justify-content:space-between}.check-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#5d6c80;cursor:pointer}.check-row input{width:17px;height:17px;accent-color:var(--primary)}
+    .small-studies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-bottom:29px}.mode-card{display:flex;flex-direction:column;text-align:left;align-items:flex-start;background:white;padding:18px;border:1px solid var(--line);border-radius:15px;color:var(--ink);min-width:0;transition:.15s}.mode-card:hover{border-color:#9eb0fc;transform:translateY(-1px)}.mode-card .mode-ico{width:36px;height:36px;border-radius:11px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:17px;margin-bottom:10px}.mode-card .name{font-weight:800;font-size:14px}.mode-card .detail{color:var(--muted);font-size:12px;margin-top:3px}.mode-card[data-mode="wrong"] .mode-ico{background:var(--bad-soft);color:var(--bad)}.mode-card[data-mode="new"] .mode-ico{background:var(--mint-soft);color:var(--mint)}
+    .mini-question{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;border-top:1px solid var(--line);padding:14px 0}.mini-question:first-child{border-top:0;padding-top:0}.mini-question:last-child{padding-bottom:0}.mini-question .q{font-weight:700;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-question .detail{font-size:12px;color:var(--muted);margin-top:3px}.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:#edf2fa;color:#66748b}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.good{background:var(--mint-soft);color:var(--mint)}.pill.gold{background:var(--gold-soft);color:var(--gold)}.placeholder{color:var(--muted);text-align:center;padding:32px 14px;font-size:13px}.placeholder b{display:block;color:var(--ink);font-size:15px;margin:6px 0}
+    .toolbar{padding:17px;display:grid;grid-template-columns:minmax(220px,1fr) minmax(125px,.45fr) minmax(155px,.5fr);gap:10px;margin-bottom:14px}.question-list{display:grid;gap:10px}.list-item{padding:18px 20px}.list-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.list-num{font-size:11px;font-weight:800;color:#7c8ba0}.list-q{margin:0;font-size:15px;font-weight:750;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}.list-answer{font-size:12px;color:var(--muted);margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.list-footer{display:flex;align-items:center;gap:7px;justify-content:space-between;border-top:1px solid var(--line);padding-top:13px;margin-top:14px;flex-wrap:wrap}.list-stats{font-size:12px;color:var(--muted);display:flex;gap:13px}.empty-action{text-align:center;padding:42px 18px}.empty-action h3{margin:0 0 5px;font-size:18px}.empty-action p{font-size:13px;color:var(--muted);margin:0 0 18px}.count-label{font-size:12px;color:var(--muted);margin:0 0 10px}
+    .editor{max-width:750px;margin:0 auto}.editor .surface{padding:28px}.field{margin-bottom:20px}.field textarea{min-height:126px}.editor .subfield textarea{min-height:95px}.editor .actionbar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;margin-top:6px}.tipbox{border-radius:12px;background:#f2f5fc;color:#5d6d86;padding:13px 15px;font-size:12px;margin:0 0 22px;line-height:1.7}.required{color:var(--bad)}
+    .session{max-width:770px;margin:0 auto}.progress-line{height:8px;background:#e4e9f3;border-radius:20px;overflow:hidden;margin:13px 0 24px}.progress-fill{height:100%;background:var(--primary);transition:width .2s}.study-card{padding:29px 30px;min-height:270px}.study-question{font-size:23px;font-weight:800;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;margin:28px 0 24px;letter-spacing:-.02em}.study-card .label{font-size:11px;color:var(--primary);font-weight:900;letter-spacing:.1em}.study-answer{border-top:1px dashed #d6dfeb;margin-top:26px;padding-top:24px}.answer-text{font-size:19px;font-weight:750;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;margin-top:12px}.explanation{font-size:13px;color:#526379;background:#f4f6fb;border-radius:12px;margin-top:17px;padding:15px;white-space:pre-wrap;overflow-wrap:anywhere}.judgement{display:flex;gap:12px;margin-top:18px}.judgement .btn{flex:1;min-height:58px;font-size:15px}.session-actions{text-align:center;margin-top:23px}.session-actions .btn{min-width:200px}.note-line{font-size:12px;color:var(--muted);text-align:center;margin:12px auto}.result-card{text-align:center;padding:44px 26px}.result-card h2{font-size:27px;margin:0 0 3px}.result-card p{color:var(--muted);font-size:13px;margin:0 0 27px}.result-numbers{display:flex;justify-content:center;gap:12px;margin:25px 0 30px}.result-numbers div{padding:15px 24px;background:#f4f7fb;border-radius:13px}.result-numbers b{display:block;font-size:26px;line-height:1.4}.result-numbers span{font-size:12px;color:var(--muted)}
+    .settings-stack{display:grid;gap:15px}.settings-stack .surface{padding:22px 25px}.settings-stack h2{margin:0 0 7px;font-size:17px}.settings-stack p{margin:0 0 16px;color:var(--muted);font-size:13px}.settings-stack .soft-note{background:#f5f7fb;padding:14px;border-radius:12px;margin-top:14px;color:#596880;font-size:12px}.warning{color:var(--bad);font-size:12px}.footer{text-align:center;color:#9aa6b5;font-size:11px;margin:48px 0 0}.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(20px);padding:12px 20px;background:#1d3049;color:#fff;box-shadow:0 12px 34px #15273f44;border-radius:12px;opacity:0;pointer-events:none;transition:.22s;z-index:20;font-size:13px;white-space:nowrap;max-width:calc(100% - 40px);overflow:hidden;text-overflow:ellipsis}.toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:700px){.shell{padding:0 14px 90px}.topbar{padding:18px 3px 18px}.logo-mark{width:41px;height:41px;border-radius:13px}.logo-copy strong{font-size:16px}.header-tag{font-size:0}.header-tag:before{width:8px;height:8px}.nav{margin-bottom:25px;border-radius:13px}.nav-btn{font-size:12px;padding:11px 2px;border-radius:9px}.heading h1{font-size:23px}.stat-grid{gap:8px;margin-bottom:15px}.stat{padding:14px 12px;border-radius:14px}.stat .meta{font-size:10px}.stat .number{font-size:25px}.stat .foot{font-size:10px}.stat .suffix{font-size:10px}.study-launch{grid-template-columns:1fr;gap:11px;margin-bottom:24px}.launch-intro{padding:21px}.launch-intro h2{font-size:21px}.launch-options{padding:18px}.small-studies{gap:8px;margin-bottom:24px}.mode-card{padding:12px 10px;border-radius:13px}.mode-card .mode-ico{width:31px;height:31px;margin-bottom:8px}.mode-card .name{font-size:12px}.mode-card .detail{font-size:10px;line-height:1.4}.pad{padding:18px}.toolbar{grid-template-columns:1fr 1fr;gap:8px;padding:12px}.toolbar #q-search{grid-column:1/-1}.list-item{padding:15px}.list-q{font-size:14px}.editor .surface{padding:20px 17px}.field-grid{grid-template-columns:1fr}.study-card{padding:22px 20px;min-height:230px}.study-question{font-size:20px;margin:25px 0}.answer-text{font-size:17px}.judgement{gap:8px}.judgement .btn{font-size:13px;min-height:54px;padding:8px}.result-card{padding:32px 15px}.result-numbers{gap:8px}.result-numbers div{padding:13px 18px}.settings-stack .surface{padding:20px 17px}}
+    @media(max-width:365px){.small-studies{grid-template-columns:1fr}.mode-card{flex-direction:row;align-items:center;gap:10px}.mode-card .mode-ico{margin:0;flex:none}.nav-btn{font-size:11px}.stat .number{font-size:23px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="logo"><div class="logo-mark">NW</div><div class="logo-copy"><strong>ネスペ一問一答</strong><span>自分だけの学習ノート</span></div></div>
+      <div class="header-tag" title="データは、このブラウザ内に保存されます"><span id="sync-status">端末内に保存</span></div>
+    </header>
+    <nav class="nav" aria-label="メインメニュー">
+      <button class="nav-btn active" type="button" data-tab="home">ホーム</button>
+      <button class="nav-btn" type="button" data-tab="list">問題一覧</button>
+      <button class="nav-btn" type="button" data-tab="editor">＋ 問題登録</button>
+      <button class="nav-btn" type="button" data-tab="settings">設定・保存</button>
+    </nav>
+    <main id="app"></main>
+    <div class="footer">NETWORK SPECIALIST · PERSONAL STUDY TOOL</div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="import-file" accept=".json,application/json" hidden>
+  <input type="file" id="import-csv-file" accept=".csv,text/csv" hidden>
+  <script>
+  (() => {
+    'use strict';
+    const KEY = 'nespe_ichimon_ichito_v1';
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const app = $('#app');
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const uid = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `q-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    let questions = [];
+    let activeTab = 'home';
+    let editorId = null;
+    let session = null;
+    let launchMode = 'all';
+    let launchLimit = '20';
+    let launchShuffle = true;
+    let listSearch = '', listFilter = 'all', listSort = 'new';
+    let toastTimer;
+    let storageOK = true;
+    const CONFIG_KEY = 'nespe_supabase_config_v1';
+    const SESSION_KEY = 'nespe_supabase_session_v1';
+    let cloudConfig = null, cloudSession = null, cloudReady = false;
+    let syncBusy = false, syncDirty = false, syncTimer = null, syncError = '';
+    function readJSON(key){try{return JSON.parse(localStorage.getItem(key) || 'null');}catch{return null;}}
+    function updateSyncLabel(){
+      const el=$('#sync-status');if(!el)return;
+      el.textContent = !cloudSession ? '端末内に保存' : !cloudReady ? '同期準備中' : syncError ? '同期エラー' : (syncDirty||syncBusy) ? '同期中…' : 'クラウド同期済み';
+      el.title=syncError||'設定・保存から同期状態を確認できます';
+    }
+    function cloudBase(){return cloudConfig?.url?.replace(/\/+$/,'');}
+    async function cloudRequest(path,options={}){
+      if(!cloudConfig?.url||!cloudConfig?.key)throw Error('Supabaseの設定がありません');
+      const headers={'apikey':cloudConfig.key,'Content-Type':'application/json',...(options.headers||{})};
+      if(cloudSession?.access_token)headers.Authorization=`Bearer ${cloudSession.access_token}`;
+      const resp=await fetch(cloudBase()+path,{...options,headers});
+      let data=null;try{data=await resp.json();}catch{}
+      if(!resp.ok)throw Error(data?.msg||data?.error_description||data?.message||data?.error||`通信エラー (${resp.status})`);
+      return data;
+    }
+    function storeSession(value){cloudSession=value; if(value)localStorage.setItem(SESSION_KEY,JSON.stringify(value));else localStorage.removeItem(SESSION_KEY);updateSyncLabel();}
+    async function ensureToken(){
+      if(!cloudSession?.refresh_token)throw Error('ログインしてください');
+      if(Date.now() < (cloudSession.expires_at||0)-60000)return;
+      const next=await cloudRequest('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:cloudSession.refresh_token})});
+      storeSession({...next,expires_at:Date.now()+(next.expires_in||3600)*1000});
+    }
+    async function readCloud(){
+      await ensureToken();
+      const res=await cloudRequest('/rest/v1/study_data?select=payload&limit=1',{headers:{'Accept':'application/json'}});
+      return Array.isArray(res)&&res.length ? res[0].payload : null;
+    }
+    async function writeCloud(snapshot){
+      await ensureToken();
+      const user=cloudSession?.user?.id;if(!user)throw Error('ユーザー情報がありません');
+      await cloudRequest('/rest/v1/study_data?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user,payload:snapshot})});
+    }
+    function queueSync(){
+      if(!cloudReady||!cloudSession)return;
+      syncDirty=true;syncError='';updateSyncLabel();
+      clearTimeout(syncTimer);syncTimer=setTimeout(flushSync,650);
+    }
+    async function flushSync(){
+      if(!cloudReady||!cloudSession||syncBusy||!syncDirty)return;
+      syncBusy=true;syncDirty=false;updateSyncLabel();
+      const snapshot={version:1,questions:JSON.parse(JSON.stringify(questions))};
+      try{await writeCloud(snapshot);syncError='';}
+      catch(err){syncDirty=true;syncError=err.message;console.error('同期失敗:',err);}
+      finally{syncBusy=false;updateSyncLabel();if(syncDirty&&!syncError)queueSync();}
+    }
+    async function pullSync(){
+      if(!cloudReady||!cloudSession||syncDirty||syncBusy)return;
+      try{
+        const remote=await readCloud();
+        if(!remote||!Array.isArray(remote.questions))return;
+        questions=remote.questions.map(normalize).filter(Boolean);
+        localSaveOnly();syncError='';updateSyncLabel();
+        if(activeTab!=='editor'&&activeTab!=='study')render();
+      }catch(err){syncError=err.message;updateSyncLabel();}
+    }
+    async function startCloud(){
+      if(!cloudSession||!cloudConfig)return;
+      cloudReady=false;syncError='';updateSyncLabel();
+      try{
+        const remote=await readCloud();
+        if(remote&&Array.isArray(remote.questions)){
+          if(questions.length&&JSON.stringify(questions)!==JSON.stringify(remote.questions)){
+            if(confirm(`この端末に ${questions.length} 問、クラウドに ${remote.questions.length} 問あります。\n\n「OK」＝クラウドをこの端末に読み込む（推奨）\n「キャンセル」＝この端末のデータをクラウドに上書きする\n\n不安な場合はキャンセル前にJSONバックアップを保存してください。`)){
+              questions=remote.questions.map(normalize).filter(Boolean);localSaveOnly();
+            }else{await writeCloud({version:1,questions});}
+          }else{questions=remote.questions.map(normalize).filter(Boolean);localSaveOnly();}
+        }else if(questions.length){await writeCloud({version:1,questions});}
+        cloudReady=true;syncError='';updateSyncLabel();render();notify('クラウド同期を開始しました');
+      }catch(err){cloudReady=false;syncError=err.message;updateSyncLabel();notify('同期できません：'+err.message);}
+    }
+    async function signIn(action){
+      const email=$('#cloud-email')?.value.trim(),password=$('#cloud-password')?.value;
+      if(!cloudConfig){notify('先に接続設定を保存してください');return;}
+      if(!email||!password){notify('メールアドレスとパスワードを入力してください');return;}
+      try{
+        const path=action==='signup'?'/auth/v1/signup':'/auth/v1/token?grant_type=password';
+        const res=await cloudRequest(path,{method:'POST',body:JSON.stringify({email,password})});
+        if(!res.access_token){notify('確認メールを開いて認証後、ログインしてください');return;}
+        storeSession({...res,expires_at:Date.now()+(res.expires_in||3600)*1000});
+        await startCloud();
+      }catch(err){notify('認証エラー：'+err.message);}
+    }
+
+
+    function normalize(raw) {
+      if (!raw || typeof raw !== 'object' || !String(raw.question ?? '').trim() || !String(raw.answer ?? '').trim()) return null;
+      return {
+        id: String(raw.id || uid()),
+        question: String(raw.question).trim(),
+        answer: String(raw.answer).trim(),
+        explanation: String(raw.explanation || ''),
+        category: String(raw.category || '').trim(),
+        correctCount: Math.max(0,Math.min(1000000,Number(raw.correctCount) || 0)),
+        wrongCount: Math.max(0,Math.min(1000000,Number(raw.wrongCount) || 0)),
+        favorite: !!raw.favorite,
+        lastResult: ['correct','wrong'].includes(raw.lastResult) ? raw.lastResult : null,
+        lastAttemptAt: Number(raw.lastAttemptAt) || null,
+        createdAt: Number(raw.createdAt) || Date.now(),
+        updatedAt: Number(raw.updatedAt) || Date.now()
+      };
+    }
+    function load() {
+      try {
+        const v = localStorage.getItem(KEY);
+        const parsed = v ? JSON.parse(v) : null;
+        const data = Array.isArray(parsed) ? parsed : parsed?.questions;
+        questions = Array.isArray(data) ? data.map(normalize).filter(Boolean) : [];
+      } catch (err) {
+        console.warn('読み込み失敗', err); storageOK = false;
+        questions = [];
+      }
+    }
+    function localSaveOnly() {
+      try {localStorage.setItem(KEY, JSON.stringify({version:1, exportedAt:null,questions}));storageOK=true;return true;}
+      catch(err){console.error(err);storageOK=false;alert('ブラウザにデータを保存できませんでした。プライベートブラウズや保存容量をご確認ください。必要に応じてJSONバックアップを保存してください。');return false;}
+    }
+    function save(){const ok=localSaveOnly();if(ok)queueSync();return ok;}
+    function notify(message) {const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),2450);}
+    function navigate(tab) {activeTab=tab;session=null; if(tab==='editor') editorId=null;render();window.scrollTo({top:0,behavior:'instant'});}
+    function render() {
+      document.querySelectorAll('[data-tab]').forEach(btn=>{const active=btn.dataset.tab===activeTab;btn.classList.toggle('active',active);btn.setAttribute('aria-current',active?'page':'false');});
+      if(activeTab==='home') renderHome();
+      if(activeTab==='list') renderList();
+      if(activeTab==='editor') renderEditor();
+      if(activeTab==='study') renderStudy();
+      if(activeTab==='settings') renderSettings();
+    }
+    function filterQuestions(mode) {
+      if(mode==='wrong') return questions.filter(q=>q.wrongCount>0);
+      if(mode==='new') return questions.filter(q=>q.correctCount+q.wrongCount===0);
+      if(mode==='favorite') return questions.filter(q=>q.favorite);
+      return questions.slice();
+    }
+    function totalWrong() {return questions.reduce((sum,q)=>sum+q.wrongCount,0);}
+    function countAttempted() {return questions.filter(q=>q.correctCount+q.wrongCount>0).length;}
+    function renderHome() {
+      const hardest=questions.filter(q=>q.wrongCount>0).sort((a,b)=>b.wrongCount-a.wrongCount).slice(0,5);
+      const wrongQuestions=questions.filter(q=>q.wrongCount>0).length;
+      app.innerHTML=`
+        <div class="heading"><div><div class="eyebrow">DASHBOARD</div><h1>学習ダッシュボード</h1><p>登録した問題を、少しずつ確実に覚えよう。</p></div><button class="btn btn-primary btn-sm" data-action="go-add">＋ 問題を追加</button></div>
+        <div class="stat-grid">
+          <div class="surface stat"><div class="meta">登録した問題</div><div class="number">${questions.length}<span class="suffix">問</span></div><div class="foot">目標 300 問</div></div>
+          <div class="surface stat good"><div class="meta">解いたことがある</div><div class="number">${countAttempted()}<span class="suffix">問</span></div><div class="foot">未挑戦 ${questions.length-countAttempted()} 問</div></div>
+          <div class="surface stat bad"><div class="meta">間違いの累計</div><div class="number">${totalWrong()}<span class="suffix">回</span></div><div class="foot">要復習 ${wrongQuestions} 問</div></div>
+        </div>
+        <div class="study-launch">
+          <div class="launch-intro"><div class="eyebrow" style="color:#aaccff">QUICK STUDY</div><h2>今日も、1問から。</h2><p>答えを確認したら「正解」「不正解」を押すだけ。間違えた回数は自動で記録します。</p></div>
+          <div class="surface launch-options">
+            <div class="field"><label class="form-label" for="launch-mode">出題する問題</label><select class="control" id="launch-mode"><option value="all" ${launchMode==='all'?'selected':''}>すべての問題（${questions.length}問）</option><option value="wrong" ${launchMode==='wrong'?'selected':''}>間違えた問題（${wrongQuestions}問）</option><option value="new" ${launchMode==='new'?'selected':''}>未挑戦の問題（${questions.length-countAttempted()}問）</option><option value="favorite" ${launchMode==='favorite'?'selected':''}>お気に入り（${questions.filter(q=>q.favorite).length}問）</option></select></div>
+            <div class="field-grid" style="margin-bottom:14px"><div><label class="form-label" for="launch-limit">問題数</label><select class="control" id="launch-limit">${['10','20','50','all'].map(v=>`<option value="${v}" ${launchLimit===v?'selected':''}>${v==='all'?'全問':v+'問'}</option>`).join('')}</select></div><div><label class="form-label">順番</label><label class="check-row" style="min-height:44px"><input type="checkbox" id="launch-shuffle" ${launchShuffle?'checked':''}>ランダムに出題</label></div></div>
+            <button class="btn btn-primary btn-block" data-action="start">学習を始める　→</button>
+          </div>
+        </div>
+        <h2 class="section-title">目的別に学習</h2>
+        <div class="small-studies">
+          <button class="mode-card" data-mode="all" data-action="quick-mode"><span class="mode-ico">▤</span><span class="name">全問から出題</span><span class="detail">登録済み ${questions.length} 問</span></button>
+          <button class="mode-card" data-mode="wrong" data-action="quick-mode"><span class="mode-ico">↻</span><span class="name">間違いだけ</span><span class="detail">復習する ${wrongQuestions} 問</span></button>
+          <button class="mode-card" data-mode="new" data-action="quick-mode"><span class="mode-ico">✧</span><span class="name">まだ解いていない</span><span class="detail">未挑戦 ${questions.length-countAttempted()} 問</span></button>
+        </div>
+        <h2 class="section-title">間違いが多い問題</h2>
+        <div class="surface pad">${hardest.length?hardest.map(q=>`<div class="mini-question"><div class="grow"><div class="q">${esc(q.question)}</div><div class="detail">${esc(q.category || '未分類')}</div></div><span class="pill bad">${q.wrongCount} 回ミス</span></div>`).join(''):`<div class="placeholder"><b>${questions.length?'まだ間違えた問題はありません':'まずは問題を登録しましょう'}</b>${questions.length?'学習すると、ここに苦手な問題が表示されます。':'ノートにある問題を1問ずつ入力していけます。'}<div style="margin-top:17px"><button class="btn btn-soft btn-sm" data-action="go-add">問題登録へ →</button></div></div>`}</div>
+      `;
+    }
+    function visibleList() {
+      let arr=filterQuestions(listFilter);
+      const s=listSearch.trim().toLocaleLowerCase();
+      if(s) arr=arr.filter(q=>[q.question,q.answer,q.explanation,q.category].some(v=>v.toLocaleLowerCase().includes(s)));
+      if(listSort==='wrong') arr.sort((a,b)=>b.wrongCount-a.wrongCount||b.updatedAt-a.updatedAt);
+      if(listSort==='old') arr.sort((a,b)=>a.createdAt-b.createdAt);
+      if(listSort==='new') arr.sort((a,b)=>b.createdAt-a.createdAt);
+      if(listSort==='recent') arr.sort((a,b)=>(b.lastAttemptAt||0)-(a.lastAttemptAt||0));
+      return arr;
+    }
+    function renderList() {
+      app.innerHTML=`
+        <div class="heading"><div><div class="eyebrow">QUESTION BANK</div><h1>問題一覧</h1><p>問題を検索・修正して、苦手分野を管理できます。</p></div><button class="btn btn-primary btn-sm" data-action="go-add">＋ 新規登録</button></div>
+        <div class="surface toolbar">
+          <input id="q-search" class="control" type="search" placeholder="問題・答え・分類で検索" value="${esc(listSearch)}" aria-label="問題を検索">
+          <select id="q-filter" class="control" aria-label="問題の絞り込み"><option value="all" ${listFilter==='all'?'selected':''}>すべて</option><option value="wrong" ${listFilter==='wrong'?'selected':''}>間違えた問題</option><option value="new" ${listFilter==='new'?'selected':''}>未挑戦</option><option value="favorite" ${listFilter==='favorite'?'selected':''}>お気に入り</option></select>
+          <select id="q-sort" class="control" aria-label="並び順"><option value="new" ${listSort==='new'?'selected':''}>登録が新しい順</option><option value="old" ${listSort==='old'?'selected':''}>登録が古い順</option><option value="wrong" ${listSort==='wrong'?'selected':''}>間違いが多い順</option><option value="recent" ${listSort==='recent'?'selected':''}>最近解いた順</option></select>
+        </div>
+        <p class="count-label" id="list-count"></p><div id="question-list-region" class="question-list"></div>
+      `;
+      renderListItems();
+    }
+    function renderListItems() {
+      const region=$('#question-list-region');if(!region)return;
+      const arr=visibleList();$('#list-count').textContent=`${arr.length} / ${questions.length} 問を表示`;
+      region.innerHTML=arr.length?arr.map((q,idx)=>`
+        <article class="surface list-item">
+          <div class="list-top"><span class="list-num">${String(idx+1).padStart(3,'0')}</span>${q.category?`<span class="pill">${esc(q.category)}</span>`:''}${q.lastResult==='wrong'?'<span class="pill bad">前回 ×</span>':q.lastResult==='correct'?'<span class="pill good">前回 ○</span>':'<span class="pill">未挑戦</span>'}${q.favorite?'<span class="pill gold">★ お気に入り</span>':''}</div>
+          <h3 class="list-q">${esc(q.question)}</h3>
+          <div class="list-answer">答え：${esc(q.answer.replace(/\n/g,' ／ '))}</div>
+          <div class="list-footer">
+            <div class="list-stats"><span>○ ${q.correctCount} 回</span><span style="color:var(--bad)">× ${q.wrongCount} 回</span></div>
+            <div class="row wrap"><button class="btn btn-secondary btn-sm" data-action="favorite" data-id="${esc(q.id)}" aria-label="お気に入り切替">${q.favorite?'★ 解除':'☆ 保存'}</button><button class="btn btn-soft btn-sm" data-action="edit" data-id="${esc(q.id)}">編集</button><button class="btn btn-danger btn-sm" data-action="delete" data-id="${esc(q.id)}">削除</button></div>
+          </div>
+        </article>`).join(''):`<div class="surface empty-action"><h3>${questions.length?'該当する問題がありません':'問題がまだありません'}</h3><p>${questions.length?'検索やフィルター条件を変更してください。':'1問ずつ問題を登録できます。'}</p><button class="btn btn-primary" data-action="go-add">＋ 問題を登録</button></div>`;
+    }
+    function renderEditor() {
+      const q=questions.find(q=>q.id===editorId);
+      app.innerHTML=`<div class="editor">
+        <div class="heading"><div><div class="eyebrow">${q?'EDIT QUESTION':'ADD QUESTION'}</div><h1>${q?'問題を編集':'新しい問題を登録'}</h1><p>${q?'答えや解説を変更できます。正誤回数は保持されます。':`${questions.length+1}問目を登録しましょう。300問まででも、それ以上でもOK。`}</p></div></div>
+        <div class="surface">
+          <div class="tipbox">📝 ノートから少しずつ入力しましょう。<strong>問題</strong>と<strong>答え</strong>だけで登録できます。分類・解説は後から追加してもOKです。</div>
+          <form id="question-form">
+            <div class="field"><label class="form-label" for="question-text">問題 <span class="required">＊必須</span></label><textarea class="control" id="question-text" required placeholder="例：OSPFでDR（指定ルータ）を選出する目的は？">${esc(q?.question||'')}</textarea></div>
+            <div class="field"><label class="form-label" for="answer-text">答え <span class="required">＊必須</span></label><textarea class="control" id="answer-text" required placeholder="例：マルチアクセスネットワークでLSA交換の隣接関係を減らすため。">${esc(q?.answer||'')}</textarea></div>
+            <div class="field-grid">
+              <div class="field"><label class="form-label" for="category-text">分類・テーマ <span style="font-weight:500">（任意）</span></label><input class="control" id="category-text" list="category-suggestions" value="${esc(q?.category||'')}" placeholder="例：DNS、OSPF、BGP"><datalist id="category-suggestions">${[...new Set([...questions.map(q=>q.category).filter(Boolean),'DNS','OSPF','BGP','SMTP','SPF・DKIM・DMARC','VXLAN','QoS','セキュリティ','ルーティング'])].map(c=>`<option value="${esc(c)}"></option>`).join('')}</datalist></div>
+              <div class="field"><label class="form-label">復習管理</label><p class="hint" style="margin-top:11px">${q?`正解 ${q.correctCount}回 ／ 不正解 ${q.wrongCount}回`:'学習すると正誤回数を自動でカウントします。'}</p></div>
+            </div>
+            <div class="field subfield"><label class="form-label" for="explanation-text">解説・補足メモ <span style="font-weight:500">（任意）</span></label><textarea class="control" id="explanation-text" placeholder="覚えるコツ、試験での注意点など">${esc(q?.explanation||'')}</textarea></div>
+            <div class="actionbar"><button class="btn btn-secondary" type="button" data-action="cancel-edit">キャンセル</button><button class="btn btn-primary" type="submit">${q?'変更を保存':'登録して次の問題へ'} →</button></div>
+          </form>
+        </div>
+      </div>`;
+    }
+    function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+    function startStudy(mode=launchMode,customIds=null){
+      let arr=customIds?customIds.map(id=>questions.find(q=>q.id===id)).filter(Boolean):filterQuestions(mode);
+      if(!arr.length){notify('出題できる問題がありません。問題を追加するか条件を変更してください。');return;}
+      if(launchShuffle) arr=shuffle([...arr]);
+      if(!customIds && launchLimit!=='all') arr=arr.slice(0,Number(launchLimit));
+      session={ids:arr.map(q=>q.id),index:0,revealed:false,judged:false,answer:null,correct:0,wrong:0,wrongIds:[],finished:false};
+      activeTab='study';render();window.scrollTo({top:0,behavior:'instant'});
+    }
+    function renderStudy(){
+      if(!session){navigate('home');return;}
+      if(session.finished){renderFinished();return;}
+      const q=questions.find(q=>q.id===session.ids[session.index]);
+      if(!q){advanceStudy();return;}
+      const num=session.index+1;
+      app.innerHTML=`<div class="session">
+        <div class="heading"><div><div class="eyebrow">STUDY SESSION</div><h1>第 ${num} 問 <span style="color:var(--muted);font-size:16px;font-weight:600">/ ${session.ids.length} 問</span></h1><p>この学習の結果： 正解 ${session.correct} 回 ／ 不正解 ${session.wrong} 回</p></div><button class="btn btn-secondary btn-sm" data-action="abort">終了する</button></div>
+        <div class="progress-line" aria-label="学習の進捗"><div class="progress-fill" style="width:${Math.round(100*session.index/session.ids.length)}%"></div></div>
+        <div class="surface study-card">
+          <div class="row between wrap"><span class="label">QUESTION</span><div class="row wrap">${q.category?`<span class="pill">${esc(q.category)}</span>`:''}<span class="pill ${q.wrongCount?'bad':''}">過去のミス ${q.wrongCount} 回</span></div></div>
+          <div class="study-question">${esc(q.question)}</div>
+          ${session.revealed?`<div class="study-answer"><div class="label">ANSWER</div><div class="answer-text">${esc(q.answer)}</div>${q.explanation?`<div class="explanation"><strong>補足・解説</strong>\n${esc(q.explanation)}</div>`:''}</div>`:`<p class="hint">答えを考えたら「答えを見る」をタップしてください。</p>`}
+        </div>
+        ${!session.revealed?`<div class="session-actions"><button class="btn btn-primary" data-action="reveal">答えを見る　→</button></div>`:!session.judged?`<div class="judgement"><button class="btn btn-danger" data-action="judge-wrong">×　不正解だった</button><button class="btn btn-good" data-action="judge-correct">○　正解した</button></div><div class="note-line">自己採点をすると、回数が自動的に保存されます。</div>`:`<div class="session-actions"><div class="note-line">${session.answer==='correct'?'○ 正解として記録しました':'× 不正解として記録しました'}</div><button class="btn btn-primary" data-action="next">${num===session.ids.length?'結果を見る':'次の問題へ　→'}</button></div>`}
+      </div>`;
+    }
+    function judge(correct){
+      if(!session || !session.revealed || session.judged)return;
+      const q=questions.find(q=>q.id===session.ids[session.index]);if(!q)return;
+      if(correct){q.correctCount++;q.lastResult='correct';session.correct++;}else{q.wrongCount++;q.lastResult='wrong';session.wrong++;session.wrongIds.push(q.id);}
+      q.lastAttemptAt=Date.now();session.judged=true;session.answer=correct?'correct':'wrong';save();renderStudy();
+    }
+    function advanceStudy(){if(!session)return;session.index++;session.revealed=false;session.judged=false;session.answer=null;if(session.index>=session.ids.length)session.finished=true;renderStudy();window.scrollTo({top:0,behavior:'instant'});}
+    function renderFinished(){
+      app.innerHTML=`<div class="session"><div class="surface result-card"><div style="font-size:33px;margin-bottom:9px">✓</div><h2>学習おつかれさまでした！</h2><p>${session.ids.length}問の学習が完了しました。記録は保存されています。</p><div class="result-numbers"><div><b>${session.ids.length}</b><span>学習した問題</span></div><div><b style="color:var(--mint)">${session.correct}</b><span>正解</span></div><div><b style="color:var(--bad)">${session.wrong}</b><span>不正解</span></div></div><div class="row wrap" style="justify-content:center"><button class="btn btn-secondary" data-action="home">ホームへ戻る</button>${session.wrongIds.length?`<button class="btn btn-primary" data-action="retry-wrong">間違えた ${session.wrongIds.length} 問をもう一度</button>`:''}</div></div></div>`;
+    }
+    function renderSettings(){
+      app.innerHTML=`<div class="heading"><div><div class="eyebrow">BACKUP & SETTINGS</div><h1>設定・データ保存</h1><p>大切な300問をなくさないために、定期的に保存しましょう。</p></div></div>
+        <div class="settings-stack">
+          <section class="surface"><h2>☁ 端末間の自動同期</h2>
+            <p>Supabase（無料枠あり）に問題・解説・正誤回数を保存します。同じアカウントでログインしたiPhone・iPad・PCに反映されます。</p>
+            <div class="soft-note"><strong>接続状態：</strong>${cloudSession ? (cloudReady?(syncError?'同期エラー：'+esc(syncError):syncDirty||syncBusy?'同期中…':'同期が有効です'):'接続待ち／エラー：'+esc(syncError)) : 'ログインしていません'}<div>※ 同じURLからアクセスし、同じアカウントでログインしてください。別端末での変更は画面を開き直すか「クラウドから再読込」で反映します。</div></div>
+            <div class="field"><label class="form-label" for="cloud-url">Supabase Project URL</label><input class="control" id="cloud-url" autocomplete="off" placeholder="https://xxxxx.supabase.co" value="${esc(cloudConfig?.url||'')}"></div>
+            <div class="field"><label class="form-label" for="cloud-key">Publishable key / anon key（公開可能なキーのみ）</label><input class="control" id="cloud-key" autocomplete="off" placeholder="sb_publishable_... または eyJ..." value="${esc(cloudConfig?.key||'')}"></div>
+            <div class="row wrap" style="margin-bottom:22px"><button class="btn btn-secondary" data-action="cloud-config">接続設定を保存</button></div>
+            <div class="field-grid"><div class="field"><label class="form-label" for="cloud-email">メールアドレス</label><input class="control" type="email" id="cloud-email" autocomplete="email" placeholder="mail@example.com"></div><div class="field"><label class="form-label" for="cloud-password">パスワード（6文字以上推奨）</label><input class="control" type="password" id="cloud-password" autocomplete="current-password" placeholder="パスワード"></div></div>
+            <div class="row wrap"><button class="btn btn-primary" data-action="cloud-login">ログイン</button><button class="btn btn-secondary" data-action="cloud-signup">新規登録</button><button class="btn btn-secondary" data-action="cloud-pull" ${cloudReady?'':'disabled'}>クラウドから再読込</button>${cloudSession?'<button class="btn btn-secondary" data-action="cloud-logout">ログアウト</button>':''}</div>
+            <p class="hint" style="margin-top:13px">初回のみ接続設定が必要です。SupabaseのSQL Editorで添付のSQLを実行し、AuthenticationでEmailログインを有効にしてください。service_role / secret keyは絶対に入力しないでください。</p>
+          </section>
+          <section class="surface"><h2>データをバックアップ</h2><p>登録した問題・正誤回数・お気に入り・解説をすべてJSONファイルに保存できます。iPhoneやiPadへの移行にも使えます。</p><div class="row wrap"><button class="btn btn-primary" data-action="export-json">JSONバックアップを保存</button><button class="btn btn-secondary" data-action="export-csv">CSVを保存</button></div><div class="soft-note">おすすめ：問題をたくさん入力した日には「JSONバックアップを保存」を押してください。CSVは表計算ソフトでも編集できますが、復元用にはJSONがおすすめです。</div></section>
+          <section class="surface"><h2>保存したデータを取り込む</h2><p>以前に保存したJSONファイルを読み込めます。別の端末へのデータ移行にも対応しています。</p><div class="row wrap"><button class="btn btn-secondary" data-action="import-json">JSONファイルを取り込む</button><button class="btn btn-secondary" data-action="import-csv">CSVで問題を追加</button></div><div class="soft-note">JSON読み込み時は、現在の内容を丸ごと置き換えるか確認します。CSV取り込みでは、問題と答えを登録し、重複する組み合わせを除外します。CSVの見出しは「問題,答え,分類,解説」に対応しています。</div></section>
+          <section class="surface"><h2>正誤回数をリセット</h2><p>全問題の「正解回数」「間違い回数」「前回結果」をゼロに戻します。問題文や答えはそのまま残ります。</p><button class="btn btn-danger" data-action="reset-counts">全問の正誤記録をリセット</button></section>
+          <section class="surface"><h2>データの保存について</h2><p>ログイン前は端末内に保存されます。ログイン後は端末内とクラウドの両方に保存します。通信が不安定なときは、同期状態を確認してください。</p><div class="soft-note"><strong>iPhone・iPadでも使うには</strong><div style="margin-top:5px">このHTMLファイルを各端末で開くか、Web上に公開するとSafariでアクセスできます。<strong>Supabaseでログインすれば自動同期できます。</strong> 念のためJSONバックアップも定期的に保存してください。</div></div><p class="warning" style="margin:12px 0 0">※ シークレット／プライベートブラウズでは保存が続かない場合があります。</p></section>
+        </div>`;
+    }
+    function download(text,filename,mime){
+      const blob=new Blob([text],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }
+    const day=()=>new Date().toLocaleDateString('sv-SE');
+    function exportJSON(){download(JSON.stringify({app:'nespe-ichimon-ichito',version:1,exportedAt:new Date().toISOString(),questions},null,2),`ネスペ1問1答_バックアップ_${day()}.json`,'application/json;charset=utf-8');notify('JSONバックアップを書き出しました');}
+    const quoteCSV = v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    function exportCSV(){const lines=[['問題','答え','分類','解説','正解回数','間違い回数','お気に入り'],...questions.map(q=>[q.question,q.answer,q.category,q.explanation,q.correctCount,q.wrongCount,q.favorite?'1':'0'])];download('\ufeff'+lines.map(cols=>cols.map(quoteCSV).join(',')).join('\r\n'),`ネスペ1問1答_問題一覧_${day()}.csv`,'text/csv;charset=utf-8');notify('CSVを書き出しました');}
+    function parseCSV(text){
+      const rows=[];let row=[],val='',inside=false;
+      text=text.replace(/^\uFEFF/,'');
+      for(let i=0;i<text.length;i++){
+        const ch=text[i];
+        if(ch==='"'){if(inside&&text[i+1]==='"'){val+='"';i++;}else inside=!inside;}
+        else if(ch===','&&!inside){row.push(val);val='';}
+        else if((ch==='\r'||ch==='\n')&&!inside){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(val);if(row.some(c=>c.trim()))rows.push(row);row=[];val='';}
+        else val+=ch;
+      }
+      if(inside)throw Error('CSVのダブルクォートの対応が取れていません。');
+      row.push(val);if(row.some(c=>c.trim()))rows.push(row);
+      return rows;
+    }
+    function importCSV(text){
+      const rows=parseCSV(text);if(rows.length<2)throw Error('CSVのデータ行が見つかりません。');
+      const headers=rows[0].map(x=>x.trim().toLowerCase());
+      const col=(...names)=>headers.findIndex(x=>names.includes(x));
+      const qcol=col('問題','question','q'),acol=col('答え','answer','a'),ccol=col('分類','テーマ','category'),ecol=col('解説','explanation','メモ');
+      if(qcol<0||acol<0)throw Error('CSVの1行目に「問題」「答え」の見出しが必要です。');
+      const existing=new Set(questions.map(q=>q.question+'\u0000'+q.answer));let added=0,skipped=0;
+      for(const row of rows.slice(1)){
+        const question=(row[qcol]||'').trim(),answer=(row[acol]||'').trim();const sig=question+'\u0000'+answer;
+        if(!question||!answer||existing.has(sig)){skipped++;continue;}
+        const obj=normalize({question,answer,category:ccol>=0?row[ccol]:'',explanation:ecol>=0?row[ecol]:''});
+        questions.push(obj);existing.add(sig);added++;
+      }
+      if(added)save();render();notify(`${added}問を追加、${skipped}行をスキップしました`);
+    }
+    function saveForm(){
+      const question=$('#question-text')?.value.trim(),answer=$('#answer-text')?.value.trim(),category=$('#category-text')?.value.trim(),explanation=$('#explanation-text')?.value.trim();
+      if(!question||!answer){notify('問題と答えは必須です');return;}
+      const now=Date.now();let q=questions.find(q=>q.id===editorId);
+      if(q){Object.assign(q,{question,answer,category,explanation,updatedAt:now});save();editorId=null;activeTab='list';render();notify('変更を保存しました');}
+      else {questions.push(normalize({question,answer,category,explanation,createdAt:now,updatedAt:now}));save();renderEditor();$('#question-text')?.focus();notify(`${questions.length}問目を登録しました`);window.scrollTo({top:0,behavior:'instant'});}
+    }
+    function onClick(e){
+      const btn=e.target.closest('[data-action], [data-tab]');if(!btn)return;
+      if(btn.dataset.tab){navigate(btn.dataset.tab);return;}
+      const act=btn.dataset.action,id=btn.dataset.id;
+      if(act==='go-add'){editorId=null;activeTab='editor';render();window.scrollTo({top:0,behavior:'instant'});$('#question-text')?.focus();}
+      else if(act==='quick-mode'){launchMode=btn.dataset.mode;startStudy(launchMode);}
+      else if(act==='start')startStudy();
+      else if(act==='edit'){editorId=id;activeTab='editor';render();window.scrollTo({top:0,behavior:'instant'});}
+      else if(act==='delete'){const q=questions.find(q=>q.id===id);if(q && confirm(`この問題を削除しますか？\n\n${q.question.slice(0,90)}\n\n正誤回数も消え、元に戻せません。`)){questions=questions.filter(x=>x.id!==id);save();renderList();notify('問題を削除しました');}}
+      else if(act==='favorite'){const q=questions.find(q=>q.id===id);if(q){q.favorite=!q.favorite;save();renderListItems();notify(q.favorite?'お気に入りに追加しました':'お気に入りを解除しました');}}
+      else if(act==='cancel-edit'){editorId=null;activeTab='list';render();}
+      else if(act==='reveal'){session.revealed=true;renderStudy();}
+      else if(act==='judge-wrong')judge(false);
+      else if(act==='judge-correct')judge(true);
+      else if(act==='next')advanceStudy();
+      else if(act==='abort'){if(session && session.correct+session.wrong>0 && !confirm('学習を終了しますか？\nここまでの正誤記録は保存されています。'))return;session=null;activeTab='home';render();}
+      else if(act==='home'){session=null;activeTab='home';render();}
+      else if(act==='retry-wrong'){const ids=[...session.wrongIds];startStudy('wrong',ids);}
+      else if(act==='cloud-config'){
+        const url=$('#cloud-url')?.value.trim().replace(/\/+$/,'');const key=$('#cloud-key')?.value.trim();
+        if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)||!key){notify('Project URLと公開可能なキーを確認してください');return;}
+        if(key.startsWith('sb_secret_')||key.startsWith('sb_service_')){notify('秘密キーは入力しないでください');return;}
+        cloudConfig={url,key};localStorage.setItem(CONFIG_KEY,JSON.stringify(cloudConfig));cloudReady=false;
+        storeSession(null);notify('接続設定を保存しました。続けてログインしてください');renderSettings();
+      }
+      else if(act==='cloud-login')signIn('login');
+      else if(act==='cloud-signup')signIn('signup');
+      else if(act==='cloud-logout'){cloudReady=false;storeSession(null);renderSettings();notify('ログアウトしました（端末内のデータは残っています）');}
+      else if(act==='cloud-pull'){if(syncDirty||syncBusy){notify('同期中です。完了後に再読込してください');}else pullSync().then(()=>notify('クラウドから読み込みました'));}
+      else if(act==='export-json')exportJSON();
+      else if(act==='export-csv')exportCSV();
+      else if(act==='import-json'){$('#import-file').value='';$('#import-file').click();}
+      else if(act==='import-csv'){$('#import-csv-file').value='';$('#import-csv-file').click();}
+      else if(act==='reset-counts'){if(!questions.length){notify('問題がありません');return;}if(confirm(`全${questions.length}問の正誤記録をゼロに戻しますか？\n問題文・解答は残ります。`)){questions.forEach(q=>{q.correctCount=0;q.wrongCount=0;q.lastResult=null;q.lastAttemptAt=null;});save();render();notify('正誤記録をリセットしました');}}
+    }
+    document.addEventListener('click',onClick);
+    document.addEventListener('submit',e=>{if(e.target.id==='question-form'){e.preventDefault();saveForm();}});
+    document.addEventListener('input',e=>{if(e.target.id==='q-search'){listSearch=e.target.value;renderListItems();}});
+    document.addEventListener('change',e=>{
+      if(e.target.id==='launch-mode')launchMode=e.target.value;
+      if(e.target.id==='launch-limit')launchLimit=e.target.value;
+      if(e.target.id==='launch-shuffle')launchShuffle=e.target.checked;
+      if(e.target.id==='q-filter'){listFilter=e.target.value;renderListItems();}
+      if(e.target.id==='q-sort'){listSort=e.target.value;renderListItems();}
+    });
+    $('#import-file').addEventListener('change',async e=>{
+      const file=e.target.files?.[0];if(!file)return;
+      try{
+        const obj=JSON.parse(await file.text());const arr=Array.isArray(obj)?obj:obj?.questions;
+        if(!Array.isArray(arr)||!arr.length)throw Error('問題データの配列がありません。');
+        if(arr.length>10000)throw Error('問題数が多すぎます（上限10,000問）。');
+        const normalized=arr.map(normalize);
+        if(normalized.some(q=>!q))throw Error('問題または答えが空のデータがあります。');
+        if(!confirm(`バックアップの ${normalized.length} 問を読み込みますか？\n\n現在の ${questions.length} 問をすべて置き換えます。必要なら先にバックアップを保存してください。`))return;
+        questions=normalized;save();activeTab='home';render();notify(`${questions.length}問のデータを復元しました`);
+      }catch(err){alert(`読み込みに失敗しました：${err.message}`);}
+    });
+    $('#import-csv-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{importCSV(await file.text());}catch(err){alert(`CSV読み込みに失敗しました：${err.message}`);}});
+    load();cloudConfig=readJSON(CONFIG_KEY);cloudSession=readJSON(SESSION_KEY);render();updateSyncLabel();
+    if(cloudConfig&&cloudSession)startCloud();
+    window.addEventListener('focus',()=>{if(cloudReady)pullSync();});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cloudReady)pullSync();});
+    setInterval(()=>{if(cloudReady&&!document.hidden)pullSync();},45000);
+    window.addEventListener('online',()=>{if(cloudReady){if(syncDirty)flushSync();else pullSync();}});
+    if(!storageOK)notify('このブラウザでは保存が制限されている可能性があります');
+  })();
+  </script>
+</body>
+</html>
